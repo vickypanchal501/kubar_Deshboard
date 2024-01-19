@@ -1,0 +1,168 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Responsive Signup/Login form</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:300,600" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'><link rel="stylesheet" href="./style.css">
+  <link href="{% static 'account/css/style.css' %}" rel="stylesheet" />
+</head>
+<body>
+   {% if messages %}
+    
+   {% for message in messages %}
+   <script>
+       alert('{{ message }}')
+   </script>
+   {% endfor %}
+
+{% endif %}
+<!-- partial:index.partial.html -->
+<div class="container">
+   <section id="formHolder">
+
+      <div class="row">
+
+         <!-- Brand Box -->
+         <div class="col-sm-6 brand">
+            <a href="#" class="logo">KB <span>.</span></a>
+
+            <div class="heading">
+               <h2>Kabir</h2>
+               <p>Your Right Choice</p>
+            </div>
+
+            <div class="success-msg">
+               <p>Great! You are one of our members now</p>
+               <a href="#" class="profile">Your Profile</a>
+            </div>
+         </div>
+
+
+         <!-- Form Box -->
+         <div class="col-sm-6 form">
+            
+            <!-- Login Form -->
+            <div class="login form-peice switched reg-form">
+               <form class="login-form" action="#" method="post">
+                  <div class="form-group">
+                     <label for="loginemail">Email Adderss</label>
+                     <input type="email" name="loginemail" id="loginemail" required>
+                  </div>
+
+                  <div class="form-group">
+                     <label for="loginPassword">Password</label>
+                     <input type="password" name="loginPassword" id="loginPassword" required>
+                  </div>
+
+                  <div class="CTA">
+                     <input type="submit" value="Login">
+                     <a href="#" id = "v" class="switch1">I'm New</a>
+                  </div>
+               </form>
+            </div><!-- End Login Form -->
+
+             <!--otp verifyDetails> -->
+            <div class="otp form-peice signup-otp switched">
+               <form class="otp-form" action="{% url 'VerifyOTP'%}" method="post">
+                  {% csrf_token %}
+                  <div class="form-group">
+                     <label for="otp">Enter OTP</label>
+                     <input type="text" name="otp" id="otp" required>
+                  </div>
+                  <div class="CTA">
+                     <button type="submit" value="Verify OTP" >verify otp</button>
+                     <!-- <input type="submit" value="Verify OTP" >  -->
+                     <a href="#" class="switch">Go Back to Signup</a>
+                  </div>
+               </form>
+            </div>
+            <!-- Adhar and PAN Verification Form -->
+            <div class="verify form-peice switched">
+               <form class="verify-form" action="#" method="post">
+
+                  <div class="form-group">
+                     <label for="adharNumber">Adhar Number</label>
+                     <input type="text" name="adharNumber" id="adharNumber" class="adharNumber">
+                     <span class="error"></span>
+                  </div>
+
+                  <div class="form-group">
+                     <label for="panNumber">PAN Number</label>
+                     <input type="text" name="panNumber" id="panNumber" class="panNumber">
+                     <span class="error"></span>
+                  </div>
+
+                  <div class="CTA">
+                     <input type="submit" value="Verify Details" id="verifyDetails">
+                     <a href="v" class="switch">Go Back to Signup</a>
+                  </div>
+               </form>
+            </div>
+
+
+            <!-- Signup Form -->
+            <div class="signup form-peice reg-form signup-otp">
+               <form class="signup-form"  method = "post" action = "{% url 'Signup' %}" >
+                  {% csrf_token %}
+                  <div class="form-group">
+                     <label for="name">Full Name</label>
+                     <input type="text" name="username" id="name" class="name">
+                     <span class="error"></span>
+                  </div>
+
+                  <div class="form-group">
+                     <label for="email">Email Adderss</label>
+                     <input type="email" name="email" id="email" class="email">
+                     <span class="error"></span>
+                  </div>
+
+                  <div class="form-group">
+                     <label for="phone">Phone Number - <small>Optional</small></label>
+                     <input type="text" name="number" id="phone">
+                  </div>
+
+                  <div class="form-group">
+                     <label for="password">Password</label>
+                     <input type="password" name="password1" id="password" class="pass">
+                     <span class="error"></span>
+                  </div>
+
+                  <div class="form-group">
+                     <label for="passwordCon">Confirm Password</label>
+                     <input type="password" name="password1" id="passwordCon" class="passConfirm">
+                     <span class="error"></span>
+                  </div>
+
+                  <div class="CTA">
+                     {% comment %} <input type="submit" value="SUBMIT" id="submit" class="switch"> {% endcomment %}
+                    <button type="submit" value="SUBMIT" id="submit" class="switch">Submit </button>  
+                     <a href="#" id= "v" class="switch1">I have an account</a>
+                  </div>
+               </form>
+            </div><!-- End Signup Form -->
+           
+         </div>
+      </div>
+
+   </section>
+
+   <input type="hidden" id="showOtpSlide" value="{% if show_otp_slide %}true{% else %}false{% endif %}">
+
+   <footer>
+ 
+   </footer>
+
+</div>
+<!-- partial -->
+<script>
+
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script><script  src="./script.js"></script>
+<script src="{% static 'account/js/script.js' %}"></script>
+
+</body>
+</html>
