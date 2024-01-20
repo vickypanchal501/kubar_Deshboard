@@ -19,6 +19,9 @@ from django.contrib.auth.hashers import make_password
 def Main(request):
     username= request.user
     return render(request, "index.html",{"username":username.username} )
+def succes(request):
+  
+    return render(request, "succes.html" )
 
 # @login_required
 # def Main(
@@ -48,7 +51,7 @@ def Login(request):
             if authenticated_user is not None:
                 login(request, authenticated_user)
                 messages.success(request, f"Welcome {authenticated_user.username}!")
-                return redirect("Main")
+                return redirect("succes")
             else:
                 messages.error(request, "Invalid password. Please try again.")
         else:
@@ -180,7 +183,7 @@ def PersonalDetails(request):
         personal_details.pan_number = pan_number
         personal_details.save()
 
-        return redirect("Main")  # Redirect to the "user_details" page
+        return redirect("succes")  # Redirect to the "user_details" page
 
     # Render the personal details form
-    return render(request, "register/signup.html")
+    return render(request, "register/user_details.html")
