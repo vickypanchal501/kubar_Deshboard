@@ -1,3 +1,4 @@
+
 """
 Django settings for my_site project.
 
@@ -25,12 +26,14 @@ SECRET_KEY = 'django-insecure-_&os#fj9tcc!x2te4$cy%)6=_j*i73i(yi@e=f(m3_!e!8@g^@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+AUTHENTICATION_BACKENDS = ['account.backends.EmailBackend', 'django.contrib.auth.backends.ModelBackend']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -129,13 +132,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-LOGIN_REDIRECT_URL = "index"
+# LOGIN_REDIRECT_URL = "index"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'panchalvikas472@gmail.com'
+EMAIL_HOST_PASSWORD = 'ppnhycncvirraqxs'
 
-EMAIL_HOST_USER  = "panchalvikas472@gmail.com"
-EMAIL_HOST_PASSWORD = "ldckbarhoeszvhpr"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

@@ -10,6 +10,7 @@ urlpatterns = [
     path('login/', views.Login, name='Login'),
     path('logout/', auth.LogoutView.as_view(template_name ='index.html'), name ='logout'),
     path('verify-otp/', views.VerifyOTP, name='VerifyOTP'),
+    path('personal_details/', views.PersonalDetails, name='personal_details'),
     # path('', views.index, name='index'),
     
 ]

@@ -1,5 +1,23 @@
 /*global $, document, window, setTimeout, navigator, console, location*/
 
+$('a.switch1').click(function (e) {
+    $(this).toggleClass('active');
+    e.preventDefault();
+
+    if ($('a.switch1').hasClass('active')) {
+        $(this).parents('.reg-form').addClass('switched').siblings('.reg-form').removeClass('switched');
+    } else {
+        $(this).parents('.reg-form').removeClass('switched').siblings('.reg-form').addClass('switched');
+    }
+});
+
+$('a.switch').click(function (e) {
+    $(this).toggleClass('active');
+    e.preventDefault();
+    $('.otp').addClass('switched');
+    $('.signup').removeClass('switched');
+
+});
 $(document).ready(function () {
     
     'use strict';
@@ -88,17 +106,23 @@ $(document).ready(function () {
         $('input').blur();
 
         if (!usernameError && !emailError && !passwordError && !passConfirmError) {
+            alert('An OTP has been sent to your email. Please verify your email.');
             // Submit form if all validations are passed
             // this.submit();
-            var formData = $(this).serialize();  // Serialize the form data
+           
+            var formData = $(this).serialize();
+            $('.signup').addClass('switched');
+            $('.otp').removeClass('switched');  // Serialize the form data
 
             $.ajax({
                 type: 'POST',
                 url: $(this).attr('action'),  // Get the form action URL
                 data: formData,
                 success: function(response) {
+                   
                     // Handle the success response from the server
                     console.log(response);
+
                     // You can perform additional actions here if needed
                 },
                 error: function(error) {
@@ -107,16 +131,8 @@ $(document).ready(function () {
                     // You can perform additional actions here if needed
                 }
             });
-            $('button.switch').click(function (e) {
-                $(this).toggleClass('active');
-                e.preventDefault();
-        
-                if ($('button.switch').hasClass('active'))  {
-                    $(this).parents('.signup-otp').addClass('switched').siblings('.signup-otp').removeClass('switched');
-                } else {
-                    $(this).parents('.signup-otp').removeClass('switched').siblings('.signup-otp').addClass('switched');
-                }
-            });
+
+      
 
         }
     });
@@ -139,12 +155,114 @@ $(document).ready(function () {
 
 
 
+$('form.otp-form').submit(function (event) {
+    event.preventDefault();
+
+    // Trigger validation check for each input
+    $('input').blur();
+    var formData = $(this).serialize(); 
+    $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        headers: {'X-CSRFToken': '{{ csrf_token }}'},
+        data: formData,
+        success: function (json) {
+            console.log(json);
+
+            if (json.otp_valid === 'invalid_otp') {
+                // Display pop-up for invalid OTP
+                alert('Invalid OTP. Please enter a valid OTP.');
+
+            } else {
+                // Redirect to another page or perform other actions on success
+                
+                // window.location.href = '/personal_details/';
+                $('.otp').addClass('switched');
+                $('.verify').removeClass('switched');
+            }
+
+        },
+        // error: function (error) {
+        //     console.log(error);
+        // }
+    });
+    
+});
+// // Handle Aadhar/PAN verification form submission
 
 
 
 
+// // Handle Aadhar/PAN verification form submission
+// $('form.verify-form').submit(function (event) {
+//     event.preventDefault();
+
+//     // Get the entered Aadhar and PAN details
+//     var adharNumber = $('#adharNumber').val();
+//     var panNumber = $('#panNumber').val();
+//     console.log(adharNumber)
 
 
+//     // Add an AJAX call to the server to verify Aadhar and PAN details
+//     $.ajax({
+//         method: 'POST',
+//         url: $(this).attr('action'),
+//         headers: {'X-CSRFToken': '{{ csrf_token }}'},
+//         data: { aadhar_number: adharNumber, pan_number: panNumber },
+//         success: function (response) {
+//             console.log(response);
+
+//         },
+//         error: function (response) {
+//             // Handle AJAX error
+//             console.log(response);
+//             console.error('Error verifying Aadhar and PAN details');
+//         }
+//     });
+// });
+
+
+    // Validate Aadhar format (numeric, 12 digits)
+    // var adharPattern = /^\d{12}$/;
+    // if (!adharPattern.test(adharNumber)) {
+    //     $('#adharNumber').siblings('.error').text('Invalid Aadhar format').fadeIn().parent('.form-group').addClass('hasError');
+    //     return;
+    // }
+
+    // Validate PAN format (alphanumeric, 10 characters)
+    // var panPattern = /^[A-Za-z]{5}\d{4}[A-Za-z]$/;
+    // if (!panPattern.test(panNumber)) {
+    //     $('#panNumber').siblings('.error').text('Invalid PAN format').fadeIn().parent('.form-group').addClass('hasError');
+    //     return;
+    // }
+
+
+            // if (response.success) {
+            //     // Aadhar and PAN are verified, show success message
+            //     $('.verify').addClass('switched');
+            //     $('.success-msg').addClass('switched');
+            // } else {
+            //     // Aadhar/PAN verification failed, display an error message
+            //     $('#adharNumber, #panNumber').siblings('.error').text('Invalid Aadhar or PAN details').fadeIn().parent('.form-group').addClass('hasError');
+            // }
+
+// fetch('/verify-otp/')
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! Status: ${response.status}`);
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         // Handle successful response
+//         console.log(data);
+//     })
+//     .catch(error => {
+//         // Handle error response
+//         console.error('Error:', error);
+//         // Display error message to the user
+//         alert('An error occurred: ' + error.message);
+//     });
 
 
 
@@ -477,50 +595,6 @@ $(document).ready(function () {
 //         });
 //     });
 
-//     // Handle Aadhar/PAN verification form submission
-//     $('form.verify-form').submit(function (event) {
-//         event.preventDefault();
-
-//         // Get the entered Aadhar and PAN details
-//         var adharNumber = $('#adharNumber').val();
-//         var panNumber = $('#panNumber').val();
-
-//         // Validate Aadhar format (numeric, 12 digits)
-//         var adharPattern = /^\d{12}$/;
-//         if (!adharPattern.test(adharNumber)) {
-//             $('#adharNumber').siblings('.error').text('Invalid Aadhar format').fadeIn().parent('.form-group').addClass('hasError');
-//             return;
-//         }
-
-//         // Validate PAN format (alphanumeric, 10 characters)
-//         var panPattern = /^[A-Za-z]{5}\d{4}[A-Za-z]$/;
-//         if (!panPattern.test(panNumber)) {
-//             $('#panNumber').siblings('.error').text('Invalid PAN format').fadeIn().parent('.form-group').addClass('hasError');
-//             return;
-//         }
-
-//         // Add an AJAX call to the server to verify Aadhar and PAN details
-//         $.ajax({
-//             url: '/api/verify-adhar-pan',
-//             method: 'POST',
-//             data: { adharNumber: adharNumber, panNumber: panNumber },
-//             success: function (response) {
-//                 if (response.success) {
-//                     // Aadhar and PAN are verified, show success message
-//                     $('.verify').addClass('switched');
-//                     $('.success-msg').addClass('switched');
-//                 } else {
-//                     // Aadhar/PAN verification failed, display an error message
-//                     $('#adharNumber, #panNumber').siblings('.error').text('Invalid Aadhar or PAN details').fadeIn().parent('.form-group').addClass('hasError');
-//                 }
-//             },
-//             error: function () {
-//                 // Handle AJAX error
-//                 console.error('Error verifying Aadhar and PAN details');
-//             }
-//         });
-//     });
 
 
-// });
 

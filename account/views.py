@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect, HttpResponse 
+from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -8,15 +9,16 @@ from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
-from .forms import SignUpForm, OTPVerificationForm
-from .models import CustomUser
+from .forms import SignUpForm, OTPVerificationForm, PersonalDetailsForm
+from .models import CustomUser ,UserPersonalDetails
 # from spliterapp.models import Group
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.hashers import make_password
 
 def Main(request):
-    return render(request, "index.html")
+    username= request.user
+    return render(request, "index.html",{"username":username.username} )
 
 # @login_required
 # def Main(
@@ -32,7 +34,8 @@ def Login(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
-
+        print(email)
+        print(password)
         # Check if user with the provided email exists
         try:
             user = CustomUser.objects.get(email=email)
@@ -41,7 +44,7 @@ def Login(request):
 
         if user is not None:
             authenticated_user = authenticate(request, email=email, password=password)
-
+            print(authenticated_user)
             if authenticated_user is not None:
                 login(request, authenticated_user)
                 messages.success(request, f"Welcome {authenticated_user.username}!")
@@ -51,14 +54,20 @@ def Login(request):
         else:
             messages.error(request, "Invalid email or user does not exist.")
     
-    return render(request, "register/login.html", {"title": "Log in"})
+    return render(request, "register/signup.html", {"title": "Log in"})
 
 def Signup(request):
     print("Signup")
     if request.method == "POST":
-        print("form")
-        # form = SignUpForm(request.POST)
-        # print(form)
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+
+            email = form.cleaned_data['email']
+            number = form.cleaned_data['number']
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            print("email", email, username)
+
         email = request.POST.get("email")
         number = request.POST.get("number")
         username = request.POST.get("username")
@@ -75,12 +84,20 @@ def Signup(request):
         context = {"username": username, "otp": otp}
         subject, from_email, to = "Welcome", "panchalvikas472@gmail.com", email
         html_content = htmly.render(context)
-
+        print("context:-", context)
         msg = EmailMultiAlternatives(
             subject, "Your OTP is: {}".format(otp), from_email, [to]
         )
+        print("massage", msg)
         msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        try:
+        #     messages.success(
+        #     request, "An OTP has been sent to your email. Please verify your email."
+        # )
+            msg.send()
+        except Exception as e:
+            print(f"Error sending email: {e}")
+        # msg.send()
 
         # Store necessary information in the session for OTP verification
         request.session["signup_otp"] = otp
@@ -89,9 +106,7 @@ def Signup(request):
         request.session["signup_password"] = password
         request.session["signup_number"] = number
 
-        messages.success(
-            request, "An OTP has been sent to your email. Please verify your email."
-        )
+
         return redirect("VerifyOTP")
 
     else:
@@ -99,7 +114,7 @@ def Signup(request):
 
 
     return render(
-        request, "register/signup.html", { "title": "Register Here"}
+        request, "register/signup.html", { "title": "Register Here", }
     )
 
 
@@ -117,7 +132,7 @@ def VerifyOTP(request):
 
         if stored_otp and entered_otp == str(stored_otp):
             # Check if the user is already registered
-            existing_user = CustomUser.objects.filter(email=email).first()
+            existing_user = CustomUser.objects.filter(email=email ).first()
 
             if existing_user:
                 messages.warning(request, "User already registered. Please log in.")
@@ -144,11 +159,37 @@ def VerifyOTP(request):
                 del request.session["signup_email"]
             if "signup_password" in request.session:
                 del request.session["signup_password"]
+            if "signup_number" in request.session:
+                del request.session["signup_number"]    
 
-            return redirect("Main")  # Redirect to your home page
+            return redirect("PersonalDetails")  # Redirect to your home page
 
         else:
-            messages.error(request, "Invalid OTP. Please try again.")
-            return render(request, "register/signup.html", {"username": username, "form": form, "show_otp_slide": True})
+            response_data = {
+                'otp_valid': "invalid_otp",
+            }
+            return JsonResponse(response_data)
+         
+    return render(request, "register/signup.html", {"username": username, "form": form, "show_otp_slide": True})
 
-    return render(request, "register/signup.html", {"username": username, "form": form})
+# @login_required
+# from django.views.decorators.csrf import requires_csrf_token
+
+@login_required
+def PersonalDetails(request):
+    if request.method == "POST":
+        # Process the personal details form submission
+        aadhar_number = request.POST.get("aadhar_number")
+        pan_number = request.POST.get("pan_number")
+        print("aadhar_number",aadhar_number)
+        # Save the personal details to the user model
+        user = request.user  # Assuming the user is authenticated
+        personal_details, created = PersonalDetails.objects.get_or_create(user=user)
+        personal_details.aadhar_number = aadhar_number
+        personal_details.pan_number = pan_number
+        personal_details.save()
+
+        return redirect("Main")
+
+    # Render the personal details form
+    return render(request, "register/signup.html")
