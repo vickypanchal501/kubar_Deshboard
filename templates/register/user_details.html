@@ -1,0 +1,93 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CodePen - Responsive Signup/Login form</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:300,600" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel="stylesheet" href="./style.css">
+    <link href="{% static 'account/css/style.css' %}" rel="stylesheet" />
+    <style></style>
+</head>
+
+<body>
+
+    <!-- partial:index.partial.html -->
+    <div class="container">
+        <section id="formHolder">
+
+            <div class="row">
+
+                <!-- Brand Box -->
+                <div class="col-sm-6 brand">
+                    <a href="#" class="logo">KB <span>.</span></a>
+
+                    <div class="heading">
+                        <h2>Kabir</h2>
+                        <p>Your Right Choice</p>
+                    </div>
+
+                    <div class="success-msg">
+                        <p>Great! You are one of our members now</p>
+                        <a href="#" class="profile">Your Profile</a>
+                    </div>
+                </div>
+
+
+                <!-- Form Box -->
+                <div class="col-sm-6 form">
+
+                    <!-- Adhar and PAN Verification Form -->
+                    <div class="verify form-peice  ">
+                        <form class="verify-form" action="{% url 'user_details' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="adharNumber">Adhar Number</label>
+                                <input type="text" name="aadhar_number" id="adharNumber" class="adharNumber">
+                                <span class="error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="panNumber">PAN Number</label>
+                                <input type="text" name="pan_number" id="panNumber" class="panNumber">
+                                <span class="error"></span>
+                            </div>
+
+                            <div class="CTA">
+                                <button type="submit" value="Verify Details" id="verifyDetails"> Verify Details</button>
+                                <!-- <input type="submit" value="Verify Details" id="verifyDetails"> -->
+                                <a href="#" class="switch">Go Back to Signup</a>
+                            </div>
+                        </form>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+
+
+        </section>
+
+
+
+        <footer>
+
+        </footer>
+
+    </div>
+    <!-- partial -->
+    
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+    <!-- <script src="./script.js"></script> -->
+    <script src="{% static 'account/js/script.js' %}"></script>
+
+</body>
+
+</html>

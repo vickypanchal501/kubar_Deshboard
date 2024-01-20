@@ -176,11 +176,18 @@ $('form.otp-form').submit(function (event) {
             } else {
                 // Redirect to another page or perform other actions on success
                 
-                // window.location.href = '/personal_details/';
-                $('.otp').addClass('switched');
-                $('.verify').removeClass('switched');
+                window.location.href = '/user_details/';
+                // $('.otp').addClass('switched');
+                // $('.verify').removeClass('switched');
             }
 
+            
+
+            // Check if the OTP slide should be shown
+            // if ($('#showOtpSlide').val() === 'true') {
+            //     $('.signup').addClass('switched');
+            //     $('.otp').removeClass('switched');
+            // }
         },
         // error: function (error) {
         //     console.log(error);
