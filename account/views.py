@@ -180,7 +180,7 @@ def PersonalDetails(request):
         personal_details.pan_number = pan_number
         personal_details.save()
 
-        return redirect("user_details")  # Redirect to the "user_details" page
+        return redirect("Main")  # Redirect to the "user_details" page
 
     # Render the personal details form
-    return render(request, "register/user_details.html")
+    return render(request, "register/signup.html")

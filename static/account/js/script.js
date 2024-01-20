@@ -154,6 +154,7 @@ $(document).ready(function () {
 
 
 
+
 $('form.otp-form').submit(function (event) {
     event.preventDefault();
 
@@ -173,15 +174,26 @@ $('form.otp-form').submit(function (event) {
                 alert('Invalid OTP. Please enter a valid OTP.');
 
             } else {
-                // Redirect to the "user_details" page using JavaScript
-                window.location.href = '/user_details/';
-                // window.location.href = '{% url "namespace:user_details" %}';
+                // Redirect to another page or perform other actions on success
+                
+                // window.location.href = '/personal_details/';
+                $('.otp').addClass('switched');
+                $('.verify').removeClass('switched');
             }
+
+            
+
+            // Check if the OTP slide should be shown
+            // if ($('#showOtpSlide').val() === 'true') {
+            //     $('.signup').addClass('switched');
+            //     $('.otp').removeClass('switched');
+            // }
         },
         // error: function (error) {
         //     console.log(error);
         // }
     });
+    
 });
 // // Handle Aadhar/PAN verification form submission
 
