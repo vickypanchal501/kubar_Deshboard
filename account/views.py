@@ -118,6 +118,7 @@ def Signup(request):
     )
 
 
+
 def VerifyOTP(request):
     username = request.session.get("signup_username")
     email = request.session.get("signup_email")
@@ -131,51 +132,59 @@ def VerifyOTP(request):
 
         if stored_otp and entered_otp == str(stored_otp):
             # Check if the user is already registered
-            existing_user = CustomUser.objects.filter(email=email).first()
+            existing_user = CustomUser.objects.filter(email=email ).first()
 
             if existing_user:
                 messages.warning(request, "User already registered. Please log in.")
             else:
                 # Complete the registration process and save the user
                 user = CustomUser(username=username, email=email, number=number)
+                
+                # Set the user's password using the password stored in the session
                 user.password = make_password(request.session.get("signup_password"))
+                
                 user.save()
-
+                
                 # Authenticate and log in the user
                 authenticated_user = authenticate(username=username, password=request.session.get("signup_password"))
                 login(request, authenticated_user)
-
+                
                 messages.success(request, "Registration successful. You are now logged in.")
+            
+            if "signup_otp" in request.session:
+                del request.session["signup_otp"]
+            if "signup_username" in request.session:
+                del request.session["signup_username"]
+            if "signup_email" in request.session:
+                del request.session["signup_email"]
+            if "signup_password" in request.session:
+                del request.session["signup_password"]
+            if "signup_number" in request.session:
+                del request.session["signup_number"]    
 
-                # Redirect to the "user_details" page
-                return redirect("user_details")
-
-            # Clear session data
-            for key in ["signup_otp", "signup_username", "signup_email", "signup_password", "signup_number"]:
-                if key in request.session:
-                    del request.session[key]
-
-            return redirect("user_details")  # Redirect to your home page
+            return redirect("PersonalDetails")  # Redirect to your home page
 
         else:
             response_data = {
                 'otp_valid': "invalid_otp",
             }
             return JsonResponse(response_data)
-
+         
     return render(request, "register/signup.html", {"username": username, "form": form, "show_otp_slide": True})
 
+# @login_required
+# from django.views.decorators.csrf import requires_csrf_token
 
+@login_required
 def PersonalDetails(request):
     if request.method == "POST":
         # Process the personal details form submission
         aadhar_number = request.POST.get("aadhar_number")
         pan_number = request.POST.get("pan_number")
-        print("aadhar_number", aadhar_number)
-
+        print("aadhar_number",aadhar_number)
         # Save the personal details to the user model
         user = request.user  # Assuming the user is authenticated
-        personal_details, created = UserPersonalDetails.objects.get_or_create(user=user)
+        personal_details, created = PersonalDetails.objects.get_or_create(user=user)
         personal_details.aadhar_number = aadhar_number
         personal_details.pan_number = pan_number
         personal_details.save()
